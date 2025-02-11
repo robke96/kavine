@@ -1,0 +1,16 @@
+{
+  "name": "kavinebot",
+  "module": "index.ts",
+  "type": "module",
+  "scripts": {
+    "dev": "bun --watch src/index.ts",
+    "build": "bun build src/index.ts --minify --bytecode --sourcemap --compile --outfile ./build/kavinebot",
+    "start": "bun run build/index.js"
+  },
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  }
+}
