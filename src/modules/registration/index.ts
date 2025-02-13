@@ -50,7 +50,7 @@ const RegistrationModule: ModuleI = {
             const buttons = VerificationButtons();
 
             // send messsage
-            memberChannel.send({ files: [card], components: [buttons] });
+            memberChannel.send({ files: [card.imageAttachment], components: [buttons] });
 
             // add to db
             await UserModel.findOneAndUpdate({
@@ -58,7 +58,7 @@ const RegistrationModule: ModuleI = {
             }, {
                 userId: member.user.id,
                 userName: member.user.username,
-                userAvatar: member.avatarURL(),
+                userAvatar: member.user.avatar,
                 lastActivityAt: Date.now(),
             }, { upsert: true, new: true })
         },

@@ -19,7 +19,7 @@ const ChannelCard = async (Icon: string, whiteText: string, blueText: string) =>
     
     const width = whiteText.length * whiteTextFontSize * 0.63;
     
-    const svg = `<svg width="${135 * blueText.length}" height="380" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/2000/svg">
+    const svg = `<svg width="${150 * blueText.length}" height="380" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/2000/svg">
      <!-- Grey rounded bg -->
         <path d="M0 64c0-22 0-34 4-42S14 8 22 4s20-4 42-4h${width}a50 50 0 0 1 0 130H0V64Z" 
         fill="#1A1B1E"/>
@@ -88,9 +88,9 @@ const ChannelCard = async (Icon: string, whiteText: string, blueText: string) =>
     const pngBuffer = pngData.asPng();
 
     const name = Date.now().toString(36)
-
     const imageAttachment = new AttachmentBuilder(pngBuffer, { name: `${name}.png` });
-    return imageAttachment;
+
+    return { imageAttachment, pngBuffer };
 }
 
 export default ChannelCard;

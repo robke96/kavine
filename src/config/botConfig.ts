@@ -25,4 +25,5 @@ export const botConfig = {
     naujokamsChannelId: "1124323472873635890",
     naujienosChannelId: "1305200306648518656",
     adminLogsChannelId: "1125348589531574302",
+    swipingChannelId: "1339507235063201844",
 }
