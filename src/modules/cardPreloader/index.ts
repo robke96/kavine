@@ -1,5 +1,5 @@
 import ChannelCard from "@/components/cards/ChannelCard";
-import { botConfig } from "@/config/botConfig";
+import { systems, channelsId, guildId } from "@/config/botConfig";
 import type { ModuleI } from "@/types/module";
 import { ActionRowBuilder, ButtonBuilder, type GuildTextBasedChannel } from "discord.js";
 import { mkdir, readdir } from "node:fs/promises";
@@ -15,14 +15,14 @@ type channelsT = {
 
 const channels: channelsT = [
     {
-        id: botConfig.profilisChannelId,
+        id: channelsId.profilis,
         buttons: [
             { label: "REDAGUOK PROFILI", style: 1, emoji: "1128405939523952681" }
         ]
     }, 
-    { id: botConfig.naujokamsChannelId },
+    { id: channelsId.naujokams},
     {
-        id: botConfig.swipingChannelId,
+        id: channelsId.swiping,
         buttons: [
             { label: "PRADĖTI", style: 1, }
         ]
@@ -30,7 +30,7 @@ const channels: channelsT = [
 ]
 
 const CardPreloaderModule: ModuleI = {
-    isEnabled: botConfig.loadingCardsSystem,
+    isEnabled: systems.loadingCards,
     events: {
         ready(client) {
             channels.forEach(async (ch) => {
@@ -51,7 +51,7 @@ const CardPreloaderModule: ModuleI = {
                     const imgDir = '.cache/'
                     
                     const yearNow = new Date().getFullYear().toString()
-                    
+
                     await mkdir(imgDir, { recursive: true });
                     const allFiles = await readdir(imgDir, { recursive: true })
                     
@@ -89,7 +89,7 @@ const CardPreloaderModule: ModuleI = {
                         });
                     } else {
                         // generate new    
-                        let guild = client.guilds.cache.get(botConfig.guildId);
+                        let guild = client.guilds.cache.get(guildId);
         
                         const serverIcon = guild?.iconURL({ forceStatic: true, extension: 'jpeg' }); 
                         const newImage = await ChannelCard(serverIcon!, `Kavinė ${yearNow}`, fixedChannelName)

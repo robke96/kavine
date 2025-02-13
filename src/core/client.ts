@@ -1,5 +1,4 @@
 import { Client, GatewayIntentBits, Partials, Options, Collection, SlashCommandBuilder, ChatInputCommandInteraction } from "discord.js";
-// import eventHanlder from "./handlers/eventHandler";
 import moduleHandler from "./handlers/moduleHandler";
 import { registerSlashCommands, slashCommandHandler } from "./handlers/commandHandler";
 
@@ -39,8 +38,6 @@ class DiscordClient extends Client {
         // command handler
         registerSlashCommands(this)
         slashCommandHandler(this);
-        // event handler
-        // eventHanlder(this);
     }
 }
 

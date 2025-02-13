@@ -1,10 +1,10 @@
-import { botConfig } from "@config/botConfig";
+import { secrets } from "@config/botConfig";
 import DiscordClient from "@core/client";
 import { connectMongoDB } from "@database/mongoConnect";
 
 // mongo connection
 (async () => {
-    await connectMongoDB(botConfig.mongoURL);
+    await connectMongoDB(secrets.mongoURL);
 })();
 
 // discord connection
@@ -14,6 +14,6 @@ client.once("ready", () => {
     console.info("[✅ | KAVINĖ BOT] - online!")
 })
 
-client.login(botConfig.token).catch(({ message }) => {
+client.login(secrets.token).catch(({ message }) => {
     return console.error("[BOT ERROR]:", message);
 });

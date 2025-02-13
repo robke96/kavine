@@ -1,8 +1,5 @@
-import { Client, Collection } from "discord.js";
 import type { ClientEvents } from "discord.js";
-import { botConfig } from "@/config/botConfig";
-import { existsSync, lstatSync, readdirSync } from "node:fs";
-
+import { existsSync, readdirSync } from "node:fs";
 import type { ModuleI } from "@/types/module";
 import type DiscordClient from "../client";
 import path from "node:path";

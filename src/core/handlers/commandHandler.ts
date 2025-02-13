@@ -1,11 +1,11 @@
-import { botConfig } from "@/config/botConfig";
+import { botId, guildId, secrets, systems } from "@/config/botConfig";
 import type DiscordClient from "../client";
 import { Events, REST, Routes, type Interaction, type SlashCommandBuilder } from "discord.js";
 import path from "node:path";
 import { readdirSync } from "node:fs";
 
 export function registerSlashCommands(client: DiscordClient): void {
-    if (!botConfig.slashCommands) return;
+    if (!systems.slashCommands) return;
 
     const commands: SlashCommandBuilder[] = []
     const commandsPath = path.join(__dirname, "../../../src/commands")
@@ -24,13 +24,13 @@ export function registerSlashCommands(client: DiscordClient): void {
         }
     }
 
-    const rest = new REST().setToken(botConfig.token);
+    const rest = new REST().setToken(secrets.token);
 
     (async () => {
         try {
             // The put method is used to fully refresh all commands in the guild with the current set
             await rest.put(
-                Routes.applicationGuildCommands(botConfig.botId, botConfig.guildId),
+                Routes.applicationGuildCommands(botId, guildId),
                 { body: commands },
             );
         } catch (error) {

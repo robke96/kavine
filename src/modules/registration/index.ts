@@ -1,4 +1,4 @@
-import { botConfig } from "@/config/botConfig";
+import { systems, categoryId, rolesId } from "@/config/botConfig";
 import type { ModuleI } from "@/types/module";
 import { CategoryChannel, ChannelType, PermissionFlagsBits, TextInputComponent } from "discord.js";
 import ChannelCard from "@/components/cards/ChannelCard";
@@ -22,14 +22,14 @@ function MathQuestion() {
 } 
 
 const RegistrationModule: ModuleI = {
-    isEnabled: botConfig.registrationSystem,
+    isEnabled: systems.registration,
     events: {
         guildMemberAdd: async (client, member) => {
             // create new channel for user 
             const memberChannel = await member.guild.channels.create({
                 name: `⏳︱${member.user.displayName}`,
                 type: ChannelType.GuildText,
-                parent: botConfig.registerCategoryId,
+                parent: categoryId.register,
                 permissionOverwrites: [
                     {
                         id: member.guild.roles.everyone, // @everyone
@@ -68,7 +68,7 @@ const RegistrationModule: ModuleI = {
             });
 
             if (user) {
-                const registerCategory = member.guild.channels.cache.get(botConfig.registerCategoryId) as CategoryChannel;
+                const registerCategory = member.guild.channels.cache.get(categoryId.register) as CategoryChannel;
                 if (registerCategory) {
                     const channel = registerCategory.children.cache.find(ch => ch.name === `⏳︱${member.user.displayName}`);
                     
@@ -94,8 +94,8 @@ const RegistrationModule: ModuleI = {
                 const [_, answer] = customId.split('/');  
 
                 if (value === answer && interaction.guild) {
-                    const narysRole = interaction.guild.roles.cache.get(botConfig.narysRoleId);
-                    if (!narysRole) interaction.guild.roles.fetch(botConfig.narysRoleId);
+                    const narysRole = interaction.guild.roles.cache.get(rolesId.narys);
+                    if (!narysRole) interaction.guild.roles.fetch(rolesId.narys);
 
                     const user = interaction.guild.members.cache.get(interaction.user.id);
                     if (!user) interaction.guild.members.fetch(interaction.user.id);
