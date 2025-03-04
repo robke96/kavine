@@ -4,7 +4,7 @@
   "type": "module",
   "scripts": {
     "dev": "bun --watch src/index.ts",
-    "build": "bun build src/index.ts --minify --bytecode --sourcemap --compile --outfile ./build/kavinebot",
+    "build": "bun build --compile --target=bun src/index.ts --sourcemap --bytecode --outfile ./build/kavine",
     "start": "bun run build/index.js"
   },
   "devDependencies": {
@@ -17,6 +17,7 @@
     "@resvg/resvg-js": "^2.6.2",
     "bufferutil": "^4.0.9",
     "discord.js": "^14.18.0",
-    "mongoose": "^8.10.0"
+    "mongoose": "^8.10.0",
+    "sharp": "^0.33.5"
   }
 }

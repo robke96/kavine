@@ -2,7 +2,7 @@ import { secrets } from "@config/botConfig";
 import DiscordClient from "@core/client";
 import { connectMongoDB } from "@database/mongoConnect";
 
-// mongo connection
+// mongo and redis connection
 (async () => {
     await connectMongoDB(secrets.mongoURL);
 })();

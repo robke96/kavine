@@ -9,7 +9,6 @@ const modules: ModuleI[] = [];
 
 /* 
     works for now, may need to optimize it in future?
-    use Map Collection instead of array => modules = []
 */
 
 const moduleHandler = (client: DiscordClient) => {
@@ -38,7 +37,7 @@ const moduleHandler = (client: DiscordClient) => {
                 const handler = module.events[typedEventName];
                 
                 if (handler) {
-                    client.on(eventName, (...args: any[]) => handler(client, ...args));
+                    client.on(typedEventName, (...args: any[]) => handler(client, ...args));
                 }
             })
         }

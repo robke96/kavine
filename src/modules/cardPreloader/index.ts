@@ -7,6 +7,7 @@ import { mkdir, readdir } from "node:fs/promises";
 type channelsT = {
     id: string;
     buttons?: {
+        id: string;
         label: string;
         style: number;
         emoji?: string;
@@ -17,14 +18,14 @@ const channels: channelsT = [
     {
         id: channelsId.profilis,
         buttons: [
-            { label: "REDAGUOK PROFILI", style: 1, emoji: "1128405939523952681" }
+            { label: "REDAGUOK PROFILI", style: 1, emoji: "1128405939523952681", id: "editProfile" }
         ]
     }, 
     { id: channelsId.naujokams},
     {
         id: channelsId.swiping,
         buttons: [
-            { label: "PRADĖTI", style: 1, }
+            { label: "PRADĖTI", style: 1, id: "startSwipe" }
         ]
     } 
 ]
@@ -34,7 +35,7 @@ const CardPreloaderModule: ModuleI = {
     events: {
         ready(client) {
             channels.forEach(async (ch) => {
-                const channel = client.channels.cache.get(ch.id) as GuildTextBasedChannel;
+                const channel = await client.channels.fetch(ch.id) as GuildTextBasedChannel;
                 if (!channel) return console.warn(`[⚠️ | CARD PRELOAD]: didn't find ${ch.id} channel, ignoring card load.`);
 
                 const channelMessages = await channel.messages.fetch();
@@ -61,9 +62,9 @@ const CardPreloaderModule: ModuleI = {
                     const buttons: ButtonBuilder[] = []
 
                     if (ch.buttons) {
-                        ch.buttons.forEach(({ label, emoji, style }) => {
+                        ch.buttons.forEach(({ label, emoji, style, id }) => {
                             const button = new ButtonBuilder()
-                                .setCustomId(`${label}Button`)
+                                .setCustomId(id)
                                 .setLabel(label)
                                 .setStyle(style)
                                 

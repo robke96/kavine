@@ -1,6 +1,35 @@
-import { Schema, model } from "mongoose";
+import { Model, Schema, model } from "mongoose";
 
-const userSchema = new Schema({
+export interface IUser {
+    userId: string;
+    userName: string;
+    userAvatar: string;
+    verifiedAt: number;
+    lastActivityAt: number;
+
+    about: {
+        name: string;
+        age: string;
+        gender: string;
+        relationshipStatus: string;
+        description: string;
+        city: string;
+        hobbies: string;
+        profileCard: string;
+        visible: boolean;
+    };
+
+    tinder: {
+        eloScore: number;
+        likedUsers: {
+            userId: string;
+            isMatch: boolean;
+            createdAt: number;
+        }[],
+    }
+}
+
+const userSchema = new Schema<IUser>({
     userId: { type: Schema.Types.String, required: true },
     userName: { type: Schema.Types.String, required: true },
     userAvatar: { type: Schema.Types.String, required: true },
@@ -9,14 +38,26 @@ const userSchema = new Schema({
 
     // Asmens Duomenys - Dating sistemai
     about: {
-        name: { type: Schema.Types.String, default: "Nežinomas" },
-        age: { type: Schema.Types.String, default: "Nežinomas" },
-        gender: { type: Schema.Types.String, default: "Nežinoma" },
-        relationshipStatus: { type: Schema.Types.String, default: "Nežinomas" },
-        about: { type: Schema.Types.String, default: "Neturi aprašymo" },
-        city: { type: Schema.Types.String, default: "Nežinomas" },
-        hobbies: { type: Schema.Types.String, default: "Nežinomi" },
+        name: { type: Schema.Types.String, },
+        age: { type: Schema.Types.String, },
+        gender: { type: Schema.Types.String },
+        relationshipStatus: { type: Schema.Types.String},
+        description: { type: Schema.Types.String, default: undefined },
+        city: { type: Schema.Types.String },
+        hobbies: { type: Schema.Types.String },
+        profileCard: { type: Schema.Types.String, default: undefined },
+        // if user is new, make card visible after setup (name, age, etc.)
+        visible: { type: Schema.Types.Boolean, default: false },
+    },
+
+    tinder: {
+        eloScore: { type: Schema.Types.Number },
+        likedUsers: [{
+            userId: { type: Schema.Types.String },
+            isMatch: { type: Schema.Types.Boolean },
+            createdAt: { type: Schema.Types.Number },
+        }],
     }
 })
 
-export const UserModel = model('Users', userSchema);
+export const UserModel: Model<IUser> = model<IUser>('Users', userSchema);

@@ -90,32 +90,34 @@ const RegistrationModule: ModuleI = {
             }
 
             if (interaction.isModalSubmit()) {
-                const { value, customId } = interaction.fields.fields.first() as TextInputComponent;
-                const [_, answer] = customId.split('/');  
-
-                if (value === answer && interaction.guild) {
-                    const narysRole = interaction.guild.roles.cache.get(rolesId.narys);
-                    if (!narysRole) interaction.guild.roles.fetch(rolesId.narys);
-
-                    const user = interaction.guild.members.cache.get(interaction.user.id);
-                    if (!user) interaction.guild.members.fetch(interaction.user.id);
-
-                    if (narysRole && user) {
-                        await user.roles.add(narysRole);
-
-                        await UserModel.updateOne({ userId: user.id }, {
-                            verifiedAt: Date.now(),
-                            lastActivityAt: Date.now(),
-                        })
+                if (interaction.customId.startsWith('mathModal')) {
+                    const { value, customId } = interaction.fields.fields.first() as TextInputComponent;
+                    const [_, answer] = customId.split('/');  
+    
+                    if (value === answer && interaction.guild) {
+                        const narysRole = interaction.guild.roles.cache.get(rolesId.narys);
+                        if (!narysRole) interaction.guild.roles.fetch(rolesId.narys);
+    
+                        const user = interaction.guild.members.cache.get(interaction.user.id);
+                        if (!user) interaction.guild.members.fetch(interaction.user.id);
+    
+                        if (narysRole && user) {
+                            await user.roles.add(narysRole);
+    
+                            await UserModel.updateOne({ userId: user.id }, {
+                                verifiedAt: Date.now(),
+                                lastActivityAt: Date.now(),
+                            })
+                        }
+    
+                        interaction.deferUpdate().then(() => {
+                            if (interaction.channel) {
+                                interaction.channel.delete();
+                            };
+                        });
+                    } else {
+                        interaction.reply({ content: `Atsakymas neteisingas, bandykite dar kartą.`, flags: "Ephemeral" })
                     }
-
-                    interaction.deferUpdate().then(() => {
-                        if (interaction.channel) {
-                            interaction.channel.delete();
-                        };
-                    });
-                } else {
-                    interaction.reply({ content: `Atsakymas neteisingas, bandykite dar kartą.`, flags: "Ephemeral" })
                 }
             }
         },

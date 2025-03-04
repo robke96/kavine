@@ -1,14 +1,16 @@
 import { Client, GatewayIntentBits, Partials, Options, Collection, SlashCommandBuilder, ChatInputCommandInteraction } from "discord.js";
 import moduleHandler from "./handlers/moduleHandler";
 import { registerSlashCommands, slashCommandHandler } from "./handlers/commandHandler";
+import type { IUser } from "@/database/models/userModel";
 
 export type SlashCommandT = {
     data: SlashCommandBuilder
     execute: (interaction: ChatInputCommandInteraction) => Promise<void> | void,
 }
     
-class DiscordClient extends Client {
+class DiscordClient extends Client<boolean> {
     slashCommandsCollection: Collection<string, SlashCommandT>
+    cardsCollection: Collection<string, string[]>
 
     constructor() {
         super({
@@ -31,7 +33,7 @@ class DiscordClient extends Client {
         })
 
         this.slashCommandsCollection = new Collection();
-
+        this.cardsCollection = new Collection()
         // module handler 
         moduleHandler(this)
 

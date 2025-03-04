@@ -2,7 +2,7 @@ import { ActionRowBuilder, ModalBuilder, TextInputBuilder, TextInputStyle, type 
 
 const RegisterModal = (mathTask: string, mathAnswer: number) => {
     const modal = new ModalBuilder()
-        .setCustomId(`mathInput/${mathAnswer}`)
+        .setCustomId(`mathModal`)
         .setTitle(`REGISTRACIJA: ${mathTask}=?`);
 
     const questionInput = new TextInputBuilder()
