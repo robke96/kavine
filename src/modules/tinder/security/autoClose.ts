@@ -8,7 +8,7 @@ import type { ButtonInteraction, CacheType } from "discord.js";
 const autoClose = async (c: DiscordClient, interaction: ButtonInteraction<CacheType>) => {
     const message = await interaction.fetchReply()
     let userLastInteraction = c.lastInteraction.get(`${interaction.user.id}:${message.channelId}`);
-    const fiveMinutes = 1 * 60 * 1000;
+    const fiveMinutes = 5 * 60 * 1000;
                
     if (userLastInteraction) {
         let { messageId, timeout } = userLastInteraction!;
