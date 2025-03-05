@@ -8,12 +8,15 @@ import startSwiping from "./matching/startSwiping";
 import nextCard from "./matching/nextCard";
 import swipeYes from "./matching/swipeYes";
 import deleteMatch from "./matching/deleteMatch";
+import autoClose from "./security/autoClose";
 
 const TinderModule: ModuleI = {
     isEnabled: systems.tinder,
     events: {
         interactionCreate: async (client, interaction) => {
             if (interaction.isButton()) {
+                const c = client as DiscordClient;
+
                 switch (interaction.customId) {
                     // profile edit
                     case "editProfile":
@@ -27,17 +30,20 @@ const TinderModule: ModuleI = {
 
                     // matching
                     case "startSwipe":
-                        startSwiping(interaction, client as DiscordClient);
+                        startSwiping(interaction, c);
                         break;
                     case interaction.customId.startsWith("swipe_yes") ? interaction.customId : undefined:
-                        swipeYes(interaction, client as DiscordClient)
+                        swipeYes(interaction, c)
                         break;
                     case "swipe_no":
-                        nextCard(interaction, client as DiscordClient);
+                        nextCard(interaction, c);
                         break
                     case "match_delete":
-                        deleteMatch(interaction, client as DiscordClient);
+                        deleteMatch(interaction, c);
                 }
+
+            // auto close card system
+                await autoClose(c, interaction);
             }
 
             if (interaction.isModalSubmit()) {

@@ -1,6 +1,6 @@
 import { categoryId, guildId } from "@/config/botConfig";
 import type DiscordClient from "@/core/client";
-import { UserModel, type IUser } from "@/database/models/userModel";
+import { UserModel } from "@/database/models/userModel";
 import { ActionRowBuilder, ButtonBuilder, ButtonStyle, ChannelType, PermissionFlagsBits, type ButtonInteraction, type CacheType } from "discord.js";
 import nextCard from "./nextCard";
 
@@ -8,7 +8,6 @@ const swipeYes = async (interaction: ButtonInteraction<CacheType>, client: Disco
     const userId = interaction.customId.split(":")[1];
 
     const User = await UserModel.findOne({ userId: userId }).lean()
-
     if (!User) return;
 
     const userLikes = User.tinder.likedUsers;
@@ -58,8 +57,7 @@ const swipeYes = async (interaction: ButtonInteraction<CacheType>, client: Disco
         ],
     })
 
-    const informText = `Sveikiname su nauju match! <@${interaction.user.id}> <@${userId}>\nŠis kanalas bus aktyvus tik tol, kol jis bus naudojamas, Jei per 3 dienas nebus jokios veiklos, kanalas bus ištrinamas.\nNepamirškite, kad neturėtumėte dalintis asmenine informacija, kurios nenorite skleisti viešai.
-    `
+    const informText = `Sveikiname su nauju match! <@${interaction.user.id}> <@${userId}>\n\nŠis kanalas bus aktyvus tik tol, kol jis bus naudojamas, Jei per 3 dienas nebus jokios veiklos, kanalas bus ištrinamas.\nNepamirškite, kad neturėtumėte dalintis asmenine informacija, kurios nenorite skleisti viešai. Visada galite perkelti savo pokalbius į asmenines žinutes.`
 
     const deleteButton = new ActionRowBuilder<ButtonBuilder>()
         .addComponents(new ButtonBuilder()
@@ -76,7 +74,11 @@ const swipeYes = async (interaction: ButtonInteraction<CacheType>, client: Disco
         $push: { "tinder.likedUsers": likedUser },
     })
 
-    return interaction.update({ content: `MATCH! ${newChannel}`, components: [], files: [], })
+    return interaction.update({ content: `MATCH! ${newChannel}`, components: [], files: [], }).then((msg) => {
+        setTimeout(() => {
+            msg.edit({ content: 'Uždarykite šia žinute.' });
+        }, 30000)
+    })
 }
 
 export default swipeYes;

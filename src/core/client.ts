@@ -1,16 +1,21 @@
-import { Client, GatewayIntentBits, Partials, Options, Collection, SlashCommandBuilder, ChatInputCommandInteraction } from "discord.js";
+import { Client, GatewayIntentBits, Partials, Options, Collection, SlashCommandBuilder, ChatInputCommandInteraction, Message } from "discord.js";
 import moduleHandler from "./handlers/moduleHandler";
 import { registerSlashCommands, slashCommandHandler } from "./handlers/commandHandler";
-import type { IUser } from "@/database/models/userModel";
 
 export type SlashCommandT = {
     data: SlashCommandBuilder
     execute: (interaction: ChatInputCommandInteraction) => Promise<void> | void,
 }
+
+type LastInteractionT = {
+    messageId: string,
+    timeout: ReturnType<typeof setTimeout>
+};
     
 class DiscordClient extends Client<boolean> {
     slashCommandsCollection: Collection<string, SlashCommandT>
     cardsCollection: Collection<string, string[]>
+    lastInteraction: Collection<string, LastInteractionT>
 
     constructor() {
         super({
@@ -34,6 +39,7 @@ class DiscordClient extends Client<boolean> {
 
         this.slashCommandsCollection = new Collection();
         this.cardsCollection = new Collection()
+        this.lastInteraction = new Collection()
         // module handler 
         moduleHandler(this)
 
