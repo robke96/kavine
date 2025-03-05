@@ -7,19 +7,21 @@ const deleteMatch = async (interaction: ButtonInteraction<CacheType>, client: Di
     if (!channel) return;
     const users = interaction.message.mentions.users.map(user => user.id);
     
-    interaction.deferReply();
-    await channel.delete()
+    await interaction.deferReply();
 
-    await UserModel.updateMany(
-        { userId: { $in: [users[0], users[1]] }}, 
-        { 
-            $pull: { 
-              "tinder.likedUsers": { 
-                userId: { $in: [users[0], users[1]] }
-              } 
-            }
-        }
-    )
+    await Promise.all([
+      channel.delete(),
+      UserModel.updateMany(
+          { userId: { $in: [users[0], users[1]] }}, 
+          { 
+              $pull: { 
+                "tinder.likedUsers": { 
+                  userId: { $in: [users[0], users[1]] }
+                } 
+              }
+          }
+      )
+    ])
 }
 
 export default deleteMatch;
