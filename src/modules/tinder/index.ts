@@ -1,4 +1,4 @@
-import { systems } from "@/config/botConfig";
+import { systems } from "@/config/botConfig.json";
 import type { ModuleI } from "@/types/module";
 import type DiscordClient from "@/core/client";
 import { showModal } from "./profile/editProfile";

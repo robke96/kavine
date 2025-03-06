@@ -1,4 +1,4 @@
-import { categoryId, guildId } from "@/config/botConfig";
+import { categoryId, guildId } from "@/config/botConfig.json";
 import type DiscordClient from "@/core/client";
 import { UserModel } from "@/database/models/userModel";
 import { ActionRowBuilder, ButtonBuilder, ButtonStyle, ChannelType, PermissionFlagsBits, type ButtonInteraction, type CacheType } from "discord.js";
@@ -39,7 +39,7 @@ const swipeYes = async (interaction: ButtonInteraction<CacheType>, client: Disco
 
     const newChannel = await guild.channels.create({
         name: `🔥︱Pokalbis #${random4Digit}`,
-        parent: categoryId.tavoPokalbiai,
+        parent: categoryId['📬・TAVO POKALBIAI'],
         type: ChannelType.GuildText,
         permissionOverwrites: [
             {

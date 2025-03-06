@@ -1,8 +1,9 @@
+import { mkdir, readdir } from 'node:fs/promises';
 import ChannelCard from "@/components/cards/ChannelCard";
-import { systems, channelsId, guildId } from "@/config/botConfig";
+import { systems, channelsId, guildId } from "@/config/botConfig.json";
 import type { ModuleI } from "@/types/module";
 import { ActionRowBuilder, ButtonBuilder, type GuildTextBasedChannel } from "discord.js";
-import { mkdir, readdir } from "node:fs/promises";
+// import initConfig from '@/config/initConfig';
 
 type channelsT = {
     id: string;
@@ -16,14 +17,14 @@ type channelsT = {
 
 const channels: channelsT = [
     {
-        id: channelsId.profilis,
+        id: channelsId['📗︱profilis'],
         buttons: [
             { label: "REDAGUOK PROFILI", style: 1, emoji: "1128405939523952681", id: "editProfile" }
         ]
     }, 
-    { id: channelsId.naujokams},
+    { id: channelsId['🧠︱naujokams']},
     {
-        id: channelsId.swiping,
+        id: channelsId['🫦︱paieškos'],
         buttons: [
             { label: "PRADĖTI", style: 1, id: "startSwipe" }
         ]
@@ -33,7 +34,9 @@ const channels: channelsT = [
 const CardPreloaderModule: ModuleI = {
     isEnabled: systems.loadingCards,
     events: {
-        ready(client) {
+        async ready(client) {
+            // await initConfig(client);
+
             channels.forEach(async (ch) => {
                 const channel = await client.channels.fetch(ch.id) as GuildTextBasedChannel;
                 if (!channel) return console.warn(`[⚠️ | CARD PRELOAD]: didn't find ${ch.id} channel, ignoring card load.`);
@@ -99,7 +102,7 @@ const CardPreloaderModule: ModuleI = {
                     }  
                 }       
             })
-        },
+        }
     }
 }
 

@@ -1,4 +1,4 @@
-import { systems, categoryId, rolesId } from "@/config/botConfig";
+import { systems, categoryId, rolesId } from "@/config/botConfig.json";
 import type { ModuleI } from "@/types/module";
 import { CategoryChannel, ChannelType, PermissionFlagsBits, TextInputComponent } from "discord.js";
 import ChannelCard from "@/components/cards/ChannelCard";
@@ -29,7 +29,7 @@ const RegistrationModule: ModuleI = {
             const memberChannel = await member.guild.channels.create({
                 name: `⏳︱${member.user.displayName}`,
                 type: ChannelType.GuildText,
-                parent: categoryId.register,
+                parent: categoryId['📕・REGISTRACIJA'],
                 permissionOverwrites: [
                     {
                         id: member.guild.roles.everyone, // @everyone
@@ -68,7 +68,7 @@ const RegistrationModule: ModuleI = {
             });
 
             if (user) {
-                const registerCategory = member.guild.channels.cache.get(categoryId.register) as CategoryChannel;
+                const registerCategory = member.guild.channels.cache.get(categoryId['📕・REGISTRACIJA']) as CategoryChannel;
                 if (registerCategory) {
                     const channel = registerCategory.children.cache.find(ch => ch.name === `⏳︱${member.user.displayName}`);
                     
@@ -95,8 +95,8 @@ const RegistrationModule: ModuleI = {
                     const [_, answer] = customId.split('/');  
     
                     if (value === answer && interaction.guild) {
-                        const narysRole = interaction.guild.roles.cache.get(rolesId.narys);
-                        if (!narysRole) interaction.guild.roles.fetch(rolesId.narys);
+                        const narysRole = interaction.guild.roles.cache.get(rolesId['・Narys']);
+                        if (!narysRole) interaction.guild.roles.fetch(rolesId['・Narys']);
     
                         const user = interaction.guild.members.cache.get(interaction.user.id);
                         if (!user) interaction.guild.members.fetch(interaction.user.id);

@@ -40,13 +40,16 @@ class DiscordClient extends Client<boolean> {
         this.slashCommandsCollection = new Collection();
         this.cardsCollection = new Collection()
         this.lastInteraction = new Collection()
+
         // module handler 
         moduleHandler(this)
-
+        
         // command handler
         registerSlashCommands(this)
         slashCommandHandler(this);
     }
+
+    
 }
 
 export default DiscordClient;

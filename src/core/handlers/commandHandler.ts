@@ -1,4 +1,4 @@
-import { botId, guildId, secrets, systems } from "@/config/botConfig";
+import { botId, guildId, systems } from "@/config/botConfig.json";
 import type DiscordClient from "../client";
 import { Events, REST, Routes, type Interaction, type SlashCommandBuilder } from "discord.js";
 import path from "node:path";
@@ -24,7 +24,8 @@ export function registerSlashCommands(client: DiscordClient): void {
         }
     }
 
-    const rest = new REST().setToken(secrets.token);
+    const token = process.env.BOT_TOKEN as string;
+    const rest = new REST().setToken(token);
 
     (async () => {
         try {

@@ -1,6 +1,6 @@
 import MatchingButtons from "@/components/buttons/Matching";
 import ProfileCard from "@/components/cards/ProfileCard";
-import { channelsId } from "@/config/botConfig";
+import { channelsId } from "@/config/botConfig.json";
 import type DiscordClient from "@/core/client";
 import { UserModel, type IUser } from "@/database/models/userModel";
 import { uploadToS3 } from "@/database/s3Client";
@@ -11,7 +11,7 @@ const startSwiping = async (interaction: ButtonInteraction<CacheType>, client: D
       userId: interaction.user.id
     }, { tinder: { likedUsers: 1 }, _id: 0 }).lean();
     if (!User) {
-      return interaction.reply({ flags: "Ephemeral", content: `Kad galėtumėte naršyti per paieška, pirma turite susikurti savo kortele <#${channelsId.profilis}>` })
+      return interaction.reply({ flags: "Ephemeral", content: `Kad galėtumėte naršyti per paieška, pirma turite susikurti savo kortele <#${channelsId['📗︱profilis']}>` })
     }
 
     const likedUsers: string[] = User.tinder.likedUsers.map(({ userId }) => userId);
