@@ -1,4 +1,3 @@
-import { systems } from "@/config/botConfig.json";
 import type { ModuleI } from "@/types/module";
 import type DiscordClient from "@/core/client";
 import { showModal } from "./profile/editProfile";
@@ -11,7 +10,6 @@ import deleteMatch from "./matching/deleteMatch";
 import autoClose from "./security/autoClose";
 
 const TinderModule: ModuleI = {
-    isEnabled: systems.tinder,
     events: {
         interactionCreate: async (client, interaction) => {
             if (interaction.isButton()) {

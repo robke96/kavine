@@ -1,56 +1,68 @@
 import MatchingButtons from "@/components/buttons/Matching";
 import ProfileCard from "@/components/cards/ProfileCard";
-import { channelsId } from "@/config/botConfig.json";
 import type DiscordClient from "@/core/client";
 import { UserModel, type IUser } from "@/database/models/userModel";
 import { uploadToS3 } from "@/database/s3Client";
 import type { AttachmentBuilder, ButtonInteraction, CacheType } from "discord.js";
 
-const startSwiping = async (interaction: ButtonInteraction<CacheType>, client: DiscordClient) => {
-    const User = await UserModel.findOne({
-      userId: interaction.user.id
-    }, { tinder: { likedUsers: 1 }, _id: 0 }).lean();
-    if (!User) {
-      return interaction.reply({ flags: "Ephemeral", content: `Kad galėtumėte naršyti per paieška, pirma turite susikurti savo kortele <#${channelsId['📗︱profilis']}>` })
-    }
+const startSwiping = async (interaction: ButtonInteraction<CacheType>, client: DiscordClient, update?: boolean) => {
+  const method = update ? "update" : "reply";
+  let watchedSet = client.watchedCards.get(interaction.user.id);
+  if (!watchedSet) {
+    watchedSet = new Set([]);
+  }
+  const watched = Array.from(watchedSet);
 
-    const likedUsers: string[] = User.tinder.likedUsers.map(({ userId }) => userId);
+  console.log(watched)
 
-    const data: IUser[] = await UserModel.aggregate([
-      { $sample: { size: 10 } },
-      { 
-        $match: { 
-          userId: { 
-            $nin: [...likedUsers, interaction.user.id] 
-          }, 
-        }
+  const User = await UserModel.findOne({
+    userId: interaction.user.id
+  }, { tinder: { likedUsers: 1 }, _id: 0 }).lean();
+
+  if (!User) {
+    const profilisCh = client.config!.channelsId["📗︱profilis"];
+    return interaction[method]({ flags: "Ephemeral", content: `Kad galėtumėte naršyti per paieška, pirma turite susikurti savo kortele <#${profilisCh}>` })
+  }
+
+  const likedUsers: string[] = User.tinder.likedUsers.map(({ userId }) => userId);
+
+  const data: IUser[] = await UserModel.aggregate([
+    { $sample: { size: 5 } },
+    {
+      $match: {
+        userId: {
+          $nin: [...likedUsers, ...watched, interaction.user.id]
+        },
       }
-    ])
-
-    if (data.length === 0) {
-      return interaction.reply({ content: 'Atrodo, kad paspaudei "patinka" ant visų kortelių!\nŠiuo metu neturime daugiau ką parodyti, bet nepamiršk sugrįžti vėliau - visada atsiranda naujų kortelių!', flags: 'Ephemeral' })
     }
+  ])
 
-    const firstUser = data[0];
+  if (data.length === 0) {
+    return interaction[method]({ components: [], files: [], content: 'Atrodo, kad paspaudei "patinka" ant visų kortelių!\nŠiuo metu neturime daugiau ką parodyti, bet nepamiršk sugrįžti vėliau - visada atsiranda naujų kortelių!', flags: 'Ephemeral', })
+  }
 
-    const buttons = MatchingButtons(firstUser.userId);
-    if (!buttons) return;
+  const firstUser = data[0];
 
-    let firstCard: string | AttachmentBuilder = firstUser.about.profileCard;
-    if (!firstCard) {
-      const card = await ProfileCard(firstUser)
-  
-      firstCard = card.imageAttachment;
-      uploadToS3(`${firstUser.userId}.webp`, card.buffer);
-    }
-    
-    interaction.reply({ flags: 'Ephemeral', files: [firstCard as AttachmentBuilder], components: [buttons] })    
+  const buttons = MatchingButtons(firstUser.userId);
+  if (!buttons) return;
 
-    const userCards = data
-      .filter(user => user.about.profileCard !== firstCard)
-      .map((user) => user.about.profileCard);
+  let firstCard: string | AttachmentBuilder = firstUser.about.profileCard;
+  if (!firstCard) {
+    const card = await ProfileCard(firstUser)
 
-    client.cardsCollection.set(interaction.user.id, userCards);
+    firstCard = card.imageAttachment;
+    await uploadToS3(`${firstUser.userId}.webp`, card.buffer);
+  }
+
+  interaction[method]({ flags: 'Ephemeral', files: [firstCard as AttachmentBuilder], components: [buttons] })
+
+  const users = data.filter(user => user.about.profileCard !== firstCard)
+
+  const userCards = users.map((user) => user.about.profileCard);
+  const userIds = users.map((u) => u.userId);
+
+  client.cardsCollection.set(interaction.user.id, userCards);
+  client.watchedCards.set(interaction.user.id, new Set([...watched, ...userIds]))
 }
 
 export default startSwiping;

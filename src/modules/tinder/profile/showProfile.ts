@@ -25,7 +25,7 @@ const showProfile = async (interaction: ButtonInteraction<CacheType>) => {
     
     if (!profileCard) {
         const card = await ProfileCard(User);
-        if (!card) return;
+        if (!card) return console.log('no card');
         
         await interaction.reply({ files: [card.imageAttachment], components: [buttons], flags: "Ephemeral" })    
 

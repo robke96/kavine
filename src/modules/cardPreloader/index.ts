@@ -1,9 +1,8 @@
 import { mkdir, readdir } from 'node:fs/promises';
 import ChannelCard from "@/components/cards/ChannelCard";
-import { systems, channelsId, guildId } from "@/config/botConfig.json";
 import type { ModuleI } from "@/types/module";
 import { ActionRowBuilder, ButtonBuilder, type GuildTextBasedChannel } from "discord.js";
-// import initConfig from '@/config/initConfig';
+import type DiscordClient from '@/core/client';
 
 type channelsT = {
     id: string;
@@ -15,27 +14,29 @@ type channelsT = {
     }[];
 }[];
 
-const channels: channelsT = [
-    {
-        id: channelsId['📗︱profilis'],
-        buttons: [
-            { label: "REDAGUOK PROFILI", style: 1, emoji: "1128405939523952681", id: "editProfile" }
-        ]
-    }, 
-    { id: channelsId['🧠︱naujokams']},
-    {
-        id: channelsId['🫦︱paieškos'],
-        buttons: [
-            { label: "PRADĖTI", style: 1, id: "startSwipe" }
-        ]
-    } 
-]
-
 const CardPreloaderModule: ModuleI = {
-    isEnabled: systems.loadingCards,
     events: {
         async ready(client) {
-            // await initConfig(client);
+            const c = client as DiscordClient;
+            const channelsId = c.config?.channelsId;
+            if (!channelsId) return;
+            
+            // todo: fix it - channelsId?, gali failint bet kada.
+            const channels: channelsT = [
+                {
+                    id: channelsId?.['📗︱profilis'],
+                    buttons: [
+                        { label: "REDAGUOK PROFILI", style: 1, emoji: "1128405939523952681", id: "editProfile" }
+                    ]
+                }, 
+                { id: channelsId?.['🧠︱naujokams']},
+                {
+                    id: channelsId?.['🫦︱paieškos'],
+                    buttons: [
+                        { label: "PRADĖTI", style: 1, id: "startSwipe" }
+                    ]
+                } 
+            ]
 
             channels.forEach(async (ch) => {
                 const channel = await client.channels.fetch(ch.id) as GuildTextBasedChannel;
@@ -93,7 +94,7 @@ const CardPreloaderModule: ModuleI = {
                         });
                     } else {
                         // generate new    
-                        let guild = client.guilds.cache.get(guildId);
+                        let guild = client.guilds.cache.get(c.config!.guildId);
         
                         const serverIcon = guild?.iconURL({ forceStatic: true, extension: 'jpeg' }); 
                         const newImage = await ChannelCard(serverIcon!, `Kavinė ${yearNow}`, fixedChannelName)

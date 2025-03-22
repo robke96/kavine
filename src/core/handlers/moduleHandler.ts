@@ -31,16 +31,14 @@ const moduleHandler = (client: DiscordClient) => {
 
     // register events
     modules.forEach((module) => {
-        if (module.isEnabled) {
-            Object.keys(module.events).forEach((eventName) => {
-                const typedEventName = eventName as keyof ClientEvents;
-                const handler = module.events[typedEventName];
+        Object.keys(module.events).forEach((eventName) => {
+            const typedEventName = eventName as keyof ClientEvents;
+            const handler = module.events[typedEventName];
                 
-                if (handler) {
-                    client.on(typedEventName, (...args: any[]) => handler(client, ...args));
-                }
-            })
-        }
+            if (handler) {
+                client.on(typedEventName, (...args: any[]) => handler(client, ...args));
+            }
+        })
     })
 }
 
