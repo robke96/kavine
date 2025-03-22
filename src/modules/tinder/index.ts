@@ -13,8 +13,6 @@ const TinderModule: ModuleI = {
     events: {
         interactionCreate: async (client, interaction) => {
             if (interaction.isButton()) {
-                const c = client as DiscordClient;
-
                 switch (interaction.customId) {
                     // profile edit
                     case "editProfile":
@@ -28,20 +26,20 @@ const TinderModule: ModuleI = {
 
                     // matching
                     case "startSwipe":
-                        startSwiping(interaction, c);
+                        startSwiping(interaction, client);
                         break;
                     case interaction.customId.startsWith("swipe_yes") ? interaction.customId : undefined:
-                        swipeYes(interaction, c)
+                        swipeYes(interaction, client)
                         break;
                     case "swipe_no":
-                        nextCard(interaction, c);
+                        nextCard(interaction, client);
                         break
                     case "match_delete":
-                        deleteMatch(interaction, c);
+                        deleteMatch(interaction, client);
                 }
 
             // auto close card system
-                await autoClose(c, interaction);
+                await autoClose(client, interaction);
             }
 
             if (interaction.isModalSubmit()) {
