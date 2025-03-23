@@ -26,7 +26,7 @@ cd kavine
 - If you haven't installed [Bun](https://bun.sh/), install it first:
 - Then install project dependencies:
 ```shell
-      bun install
+bun install
 ``` 
 
 ### 3. Create a Discord Server
