@@ -1,25 +1,18 @@
 import type DiscordClient from "../client";
 import { Events, REST, Routes, type Interaction, type SlashCommandBuilder } from "discord.js";
 import path from "node:path";
-import { readdirSync } from "node:fs";
+import { Glob } from "bun";
 
-export function registerSlashCommands(client: DiscordClient): void {
+export async function registerSlashCommands(client: DiscordClient) {
     const commands: SlashCommandBuilder[] = []
-    const commandsPath = path.join(__dirname, "../../../src/commands")
-    const commandsFolder = readdirSync(commandsPath);
-    
-    for (const folder of commandsFolder) {
-        const folderPath = path.join(commandsPath, folder);
-        const commandFiles = readdirSync(folderPath).filter(file => file.match(/(j|t)s$/));
+    const glob = new Glob('src/commands/**/*.ts');
 
-        for (const file of commandFiles) {
-            const filePath = path.join(folderPath, file);
-            const cmd = require(filePath).default;
+    for await (const filePath of glob.scan('.')) {
+        const command = (await import (path.resolve(filePath))).default;
 
-            commands.push(cmd.data);
-            client.slashCommandsCollection.set(cmd.data.name, cmd);
-        }
-    }
+        commands.push(command.data);
+        client.slashCommandsCollection.set(command.data.name, command);
+    };
 
     const token = process.env.BOT_TOKEN as string;
     const rest = new REST().setToken(token);
