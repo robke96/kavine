@@ -17,8 +17,9 @@ type channelsT = {
 const CardPreloaderModule: ModuleI = {
     events: {
         async ready(client) {
-            const c = client as DiscordClient;
-            const channelsId = c.config?.channelsId;
+            // TEMP FIX! waiting 5s for config to load.
+            await Bun.sleep(5000);
+            const channelsId = client.config?.channelsId;
             if (!channelsId) return;
             
             // todo: fix it - channelsId?, gali failint bet kada.
@@ -94,7 +95,7 @@ const CardPreloaderModule: ModuleI = {
                         });
                     } else {
                         // generate new    
-                        let guild = client.guilds.cache.get(c.config!.guildId);
+                        let guild = client.guilds.cache.get(client.config!.guildId);
         
                         const serverIcon = guild?.iconURL({ forceStatic: true, extension: 'jpeg' }); 
                         const newImage = await ChannelCard(serverIcon!, `Kavinė ${yearNow}`, fixedChannelName)
