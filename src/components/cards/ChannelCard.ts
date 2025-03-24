@@ -50,7 +50,7 @@ const ChannelCard = async (Icon: string, whiteText: string, blueText: string) =>
             </feMerge>
             </filter>
         </defs>
-        <text fill="#5865F2" font-family="UniSansHeavy" x="-20" y="320" font-size="232" filter="url(#drop-shadow)">${blueText}</text>
+        <text fill="#5865F2" font-family="UniSansHeavy" x="-10" y="320" font-size="232" filter="url(#drop-shadow)">${blueText}</text>
     </svg>
     `;
 
