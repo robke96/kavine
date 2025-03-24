@@ -1,33 +1,20 @@
 import type { ClientEvents } from "discord.js";
-import { existsSync, readdirSync } from "node:fs";
 import type { ModuleI } from "@/types/module";
 import type DiscordClient from "../client";
 import path from "node:path";
+import { Glob } from "bun";
 
-const modulesPath = path.join(__dirname, '../../../src/modules');
 const modules: ModuleI[] = [];
+const glob = new Glob('src/modules/**/index.ts');
 
-/* 
-    works for now, may need to optimize it in future?
-*/
-
-const moduleHandler = (client: DiscordClient) => {
-    // read files and push to array
-    const moduleFolders = readdirSync(modulesPath, { withFileTypes: true })
-    .filter(dirent => dirent.isDirectory())
-    .map(dirent => dirent.name);
-  
-    moduleFolders.forEach((folder) => {
-        const indexPath = path.join(modulesPath, folder, 'index.ts');
+const moduleHandler = async (client: DiscordClient) => {
+    for await (const filePath of glob.scan('.')) {
+        const module = await import(path.resolve(filePath));
         
-        if (existsSync(indexPath)) {
-          const module = require(indexPath);
-
-          if (module.default) {
+        if (module.default) {
             modules.push(module.default);
-          }
         }
-    });
+    };
 
     // register events
     modules.forEach((module) => {
