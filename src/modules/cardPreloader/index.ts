@@ -17,8 +17,6 @@ type channelsT = {
 const CardPreloaderModule: ModuleI = {
     events: {
         async ready(client) {
-            // TEMP FIX! waiting 5s for config to load.
-            await Bun.sleep(5000);
             const channelsId = client.config?.channelsId;
             if (!channelsId) return;
             
