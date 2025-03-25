@@ -1,30 +1,29 @@
-import { ChannelType } from "discord.js";
+import { ChannelType, Routes, type APIApplication, type APIChannel, type APIRole, type APIUser } from "discord.js";
 import type DiscordClient from "../client";
-import type { BotConfigI, CategoryNames } from "@/types/module";
+import type { BotConfigI } from "@/types/module";
+import { rest } from "../client";
 
-export const loadConfig = async (c: DiscordClient) => {
+export const loadConfig = async () => {
     const guildId = process.env.GUILD_ID;
     if (!guildId) throw Error("[FETCH CONFIG ERR]: Missing guild id");
 
-    const guild = await c.guilds.fetch(guildId).catch((err) => {
-        throw Error(err);
-    })
-    
-    const channels = guild.channels.cache;
-    const roles = guild.roles.cache;
+    const [bot, channels, roles] = await Promise.all([
+        rest.get(Routes.user('@me')) as Promise<APIUser>,
+        rest.get(Routes.guildChannels(guildId)) as Promise<APIChannel[]>,
+        rest.get(Routes.guildRoles(guildId)) as Promise<APIRole[]>,
+    ])
+
     const categories = channels.filter(channel => channel.type === ChannelType.GuildCategory);
 
-
-
     const configData: BotConfigI = {
-        botId: c.user!.id,
-        guildId: guild.id,
+        botId: bot.id,
+        guildId: guildId,
         categoryId: categories.reduce((acc, category) => {
             acc[category.name] = category.id;
             return acc;
         }, {} as Record<string, string>),
         channelsId: channels.filter(channel => channel.type !== ChannelType.GuildCategory).reduce((acc, channel) => {
-            acc[channel.name] = channel.id;
+            acc[channel.name!] = channel.id;
             return acc;
         }, {} as Record<string, string>),
         rolesId: roles.reduce((acc, role) => {

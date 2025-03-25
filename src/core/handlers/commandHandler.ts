@@ -2,6 +2,7 @@ import type DiscordClient from "../client";
 import { Events, REST, Routes, type Interaction, type SlashCommandBuilder } from "discord.js";
 import path from "node:path";
 import { Glob } from "bun";
+import { rest } from "../client";
 
 export async function registerSlashCommands(client: DiscordClient) {
     const commands: SlashCommandBuilder[] = []
@@ -13,9 +14,6 @@ export async function registerSlashCommands(client: DiscordClient) {
         commands.push(command.data);
         client.slashCommandsCollection.set(command.data.name, command);
     };
-
-    const token = process.env.BOT_TOKEN as string;
-    const rest = new REST().setToken(token);
 
     (async () => {
         try {

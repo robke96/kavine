@@ -1,4 +1,4 @@
-import { Client, GatewayIntentBits, Partials, Options, Collection, SlashCommandBuilder, ChatInputCommandInteraction, Message, SlashCommandSubcommandBuilder } from "discord.js";
+import { Client, GatewayIntentBits, Partials, Options, Collection, SlashCommandBuilder, ChatInputCommandInteraction, Message, SlashCommandSubcommandBuilder, REST } from "discord.js";
 import moduleHandler from "./handlers/moduleHandler";
 import { registerSlashCommands, slashCommandHandler } from "./handlers/commandHandler";
 import { loadConfig } from './config/loadConfig';
@@ -13,6 +13,8 @@ type LastInteractionT = {
     messageId: string,
     timeout: ReturnType<typeof setTimeout>
 };
+
+export const rest = new REST().setToken(process.env.BOT_TOKEN as string);
     
 class DiscordClient extends Client<boolean> {
     public config: BotConfigI | null = null;
@@ -46,17 +48,17 @@ class DiscordClient extends Client<boolean> {
     
     async #init() {
         try {
+            this.config = await loadConfig();
             moduleHandler(this);
             registerSlashCommands(this);
             slashCommandHandler(this);
 
             // load config in cache
-            this.once("ready", async () => {
-                this.config = await loadConfig(this);
+            this.once("ready", () => {
                 console.info("[✅ | KAVINĖ BOT] - online!")
             });
         } catch (error) {
-            console.error('Error during bot init');
+            console.error('Error during bot init\n', error);
         }
     }
 }
