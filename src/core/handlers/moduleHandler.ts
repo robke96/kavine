@@ -23,7 +23,7 @@ const moduleHandler = async (client: DiscordClient) => {
             const handler = module.events[typedEventName];
                 
             if (handler) {
-                client.on(typedEventName, (...args: any[]) => handler(client, ...args));
+                client.on(typedEventName, (...args: ClientEvents[typeof typedEventName]) => handler(client, ...args));
             }
         })
     })
